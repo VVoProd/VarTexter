@@ -8,7 +8,6 @@ from pygments.lexers import PythonLexer
 from pygments.token import Token
 from time import *
 import webbrowser, win32api, urllib.parse, keyboard, re, pyperclip, os, datetime
-#_______________________________________________________HELP_______________________________________________________
 syntax = "plain_text"
 shrift_font = "Times New Roman"
 shrift_num = 15
@@ -43,37 +42,14 @@ info_txt = """
 --Шрифт Ctrl+R
 --Темы Ctrl+T
 """
-#_______________________________________________________HELP_______________________________________________________
-
-#_______________________________________________________TKINTER_______________________________________________________
 window = Tk()
 window.title(f"VarTexter - {filepath}")
 backup = open(r"""C:\Users\%s\Documents\backup.up""" % username, "a+")
 window.rowconfigure(0, minsize=600, weight=1)
 window.columnconfigure(1, minsize=800, weight=1)
 window.geometry("700x500+0+0")
-# tabControl = Notebook(window)
-# tab1 = Frame(tabControl)
-
-# def add_tab(event=False):
-#     global tabs, tab, txt_edit
-#     tab = Frame(tabControl)
-#     tabControl.add(tab, text=f"Вкладка - {tabs}")
-#     tabControl.pack(expand = 1, fill ="both")
-#     tabs += 1
-#     txt = ScrolledText(tab, undo=True, maxundo=-1, autoseparators=True, font=((shrift_font), shrift_num),selectbackground="light gray", selectforeground="blue")
-#     txt.pack(expand = True, fill= "both")
-#     tab_num = tabs-1
-
-# tabControl.add(tab1, text ='Вкладка - 1')
-# tabControl.pack(expand = 1, fill ="both")
 txt_edit = ScrolledText(window, undo=True, maxundo=-1, autoseparators=True, font=((shrift_font), shrift_num),selectbackground="light gray", selectforeground="blue")
 txt_edit.pack(expand = True, fill= "both")
-#_______________________________________________________TKINTER_______________________________________________________
-
-
-#_______________________________________________________FILE_FUNCTIONS_______________________________________________________
-
 def save_file(event=False):
     global filepath
     contents = txt_edit.get(1.0, END)
@@ -86,7 +62,6 @@ def save_file(event=False):
         backup.write(f"\nSaved file at filepath: {filepath.name}; Time: {datetime.datetime.now()}")
     except AttributeError:
         pass
-
 def open_file(event=False):
     global filepath
     if filepath != "Не сохранено":
@@ -114,7 +89,6 @@ def open_file(event=False):
                 backup.write(f"\nOpened file at filepath: {filepath.name}; Time: {datetime.datetime.now()}")
             except UnicodeDecodeError:
                 messagebox.showerror(title="VarTexter", message="Этот тип файла не распознаётся программой")
-
 def save_with_ext(event=False):
     if filepath != "Не сохранено":
         if filepath is not None:
@@ -132,7 +106,6 @@ def save_with_ext(event=False):
             save_file()
     if filepath == "Не сохранено":
         save_file()
-
 def new_file(event=False):
     try:
         if filepath == "Не сохранено":
@@ -150,7 +123,6 @@ def new_file(event=False):
             window.destroy()
     except NameError:
         pass
-
 def printing(event=False):
     try:
         win32api.ShellExecute(0, "print", filepath.name, None, ".", 0)
@@ -158,11 +130,8 @@ def printing(event=False):
         messagebox.showerror(title="VarTexter - Print", message="Неправильный путь")
     except Exception:
         messagebox.showwarning(title="VarTexter - Print", message="Принтер не найден")
-#_______________________________________________________FILE_FUNCTIONS_______________________________________________________
-#_______________________________________________________WINDOW_FUNCTIONS_______________________________________________________
 def open_new_w():
     Popen(r"""C:\Program Files\VarTexter\VarTexter.exe""")
-
 def closew():
     try:
         if filepath == "Не сохранено":
@@ -179,11 +148,6 @@ def closew():
             window.destroy()
     except NameError:
         pass
-
-#_______________________________________________________WINDOW_FUNCTIONS_______________________________________________________
-
-
-#_______________________________________________________FONT_FUNCTIONS_______________________________________________________
 def get_shrift(event=False):
     global test_text
     window_s = Tk()
@@ -222,30 +186,18 @@ def get_shrift(event=False):
     window_s.bind("<F4>", fatal_closing)
     window_s.iconbitmap(r"""C:\Program Files\VarTexter\vartexter.ico""")
     window_s.mainloop()
-#_______________________________________________________FONT_FUNCTIONS_______________________________________________________
-
-#_______________________________________________________________FATAL_CLOSING_______________________________________________________________
 def fatal_closing(event):
     window.destroy()
     window_s.destroy()
     backup.close()
-
-#_______________________________________________________________FATAL_CLOSING_______________________________________________________________
-
-
-#_______________________________________________________TEXT_EDIT_FUNCTIONS_______________________________________________________
 def undo(event=False):
     txt_edit.edit_undo()
-
 def redo(event=False):
     txt_edit.edit_redo()
-
 def copy_v(event=False):
     copy_v = pyperclip.copy(txt_edit.selection_get())
-
 def paste(event=False):
     paste_v = txt_edit.insert(END, pyperclip.paste())
-
 def delete_txt(event=False):
     delete_v = txt_edit.delete("sel.first", "sel.last")
 def search_in_br(event=False):
@@ -255,37 +207,22 @@ def search_in_br(event=False):
     except Exception:
         search = txt_edit.get(1.0, END)
         webbrowser.open(search)
-#_______________________________________________________TEXT_EDIT_FUNCTIONS_______________________________________________________
-
-
-#_______________________________________________________SYNTAX_FUNCTIONS_______________________________________________________
 def get_txt_edit_coord(s: str, i: int):
     for row_number, line in enumerate(s.splitlines(keepends=True), 1):
         if i < len(line):
             return f"{row_number}.{i}"
-    
         i -= len(line)
-
 def on_edit(event):
     backup = open(r"""C:\Users\%s\Documents\backup.up""" % username, "a+")
-# Удалить все имеющиеся теги из текста
     for tag in txt_edit.tag_names():
         txt_edit.tag_remove(tag, 1.0, END)
-
-# Разобрать текст на токены
     s = txt_edit.get(1.0, END)
     tokens = lexer.get_tokens_unprocessed(s)
-
     for i, token_type, token in tokens:
-#        print(i, token_type, repr(token))
         backup.write(token)
         j = i + len(token)
     txt_edit.edit_modified(0)
-
 txt_edit.bind("<<Modified>>", on_edit)
-#_______________________________________________________SYNTAX_FUNCTIONS_______________________________________________________
-
-#_______________________________________________________HELP_FUNCTIONS_______________________________________________________
 def all_info(event=False):
     info = Tk()
     info.geometry("300x400+10+50")
@@ -296,12 +233,10 @@ def all_info(event=False):
     info_lbl.pack()
     info.iconbitmap(r"""C:\Program Files\VarTexter\vartexter.ico""")
     info.mainloop()
-#_______________________________________________________BACKGROUND_SETTINGS_________________________________________________________
 def theme_black(event=False):
     txt_edit.configure(background="black", foreground="white", cursor="xterm white")
 def theme_white(event=False):
     txt_edit.configure(background="white", foreground="black", cursor="xterm black")
-
 def themes(event=False):
     background_change = Tk()
     background_change.iconbitmap(r"""C:\Program Files\VarTexter\vartexter.ico""")
@@ -312,11 +247,8 @@ def themes(event=False):
     change_theme_l = Label(background_change, text="Темы для редактора:", background="white", activebackground="white")
     black_theme_b = Button(background_change, text="Темная тема", command=theme_black, relief="flat", background="white", activebackground="white")
     white_theme_b = Button(background_change, text="Светлая тема(стандарт)", command=theme_white, relief="flat", background="white", activebackground="white")
-
     hex_theme1 = Entry(background_change)
-
     hex_theme2 = Entry(background_change)
-
     hex_theme3 = Entry(background_change)
     def hex_change():
         r_color = hex_theme1.get()
@@ -328,7 +260,6 @@ def themes(event=False):
         except Exception:
             messagebox.showwarning(title="VarTexter", message="Неправильный цвет!")
     hex_theme_set = Button(background_change, text="Применить RGB или HEX к фону", command=hex_change, relief="flat", background="white", activebackground="white")
-
     hex_font1 = Entry(background_change)
     hex_font2 = Entry(background_change)
     hex_font3 = Entry(background_change)
@@ -342,8 +273,6 @@ def themes(event=False):
         except Exception:
             messagebox.showwarning(title="VarTexter", message="Неправильный цвет!")
     hex_font_set = Button(background_change, text="Применить RGB или HEX к тексту", command=hex_font_change, relief="flat", background="white", activebackground="white")
-
-
     change_theme_l.pack()
     black_theme_b.pack()
     white_theme_b.pack()
@@ -357,10 +286,6 @@ def themes(event=False):
     hex_font_set.pack()
     background_change.iconbitmap(r"""C:\Program Files\VarTexter\vartexter.ico""")
     background_change.mainloop()
-#_______________________________________________________BACKGROUND_SETTINGS_________________________________________________________
-
-#_______________________________________________________HELP_FUNCTIONS_______________________________________________________
-
 class RKB(Frame):
     def __init__(self, parent):
         Frame.__init__(self, parent)
@@ -375,18 +300,15 @@ class RKB(Frame):
         self.menu.add_command(label="Выделить всё", command=lambda: keyboard.send("Ctrl+a"))
         self.parent.bind("<Button-3>", lambda event: self.menu.post(event.x_root, event.y_root))
         self.pack()
-
 main_menu = Menu(tearoff = False)
 file_menu = Menu(tearoff = False)
 text_menu = Menu(tearoff = False)
 sett_menu = Menu(tearoff = False)
 help_menu = Menu(tearoff = False)
-
 main_menu.add_cascade(label="Файл", menu=file_menu)
 main_menu.add_cascade(label="Правка", menu=text_menu)
 main_menu.add_cascade(label="Настройки", menu=sett_menu)
 main_menu.add_cascade(label="Помощь", menu=help_menu)
-
 file_menu.add_command(label="Новый файл (Ctrl+N)", command=new_file)
 file_menu.add_command(label="Открыть файл (Ctrl+O)", command=open_file)
 file_menu.add_command(label="Сохранить (Ctrl+S)", command=save_with_ext)
@@ -396,7 +318,6 @@ file_menu.add_command(label="Печать (Ctrl+P)", command=printing)
 file_menu.add_separator()
 file_menu.add_command(label="Выход (Ctrl+Q)", command=closew)
 file_menu.add_command(label="Новое окно (Ctrl+Shift+N)", command=open_new_w)
-
 text_menu.add_command(label="Назад (Ctrl+Z)", command=undo)
 text_menu.add_command(label="Вперед (Ctrl+Shift+Z)", command=redo)
 text_menu.add_separator()
@@ -405,12 +326,10 @@ text_menu.add_command(label="Вставить (Ctrl+V)", command=redo)
 text_menu.add_command(label="Вырезать (Ctrl+X)", command=delete_txt)
 text_menu.add_separator()
 text_menu.add_command(label="Поиск в браузере (Ctrl+B)", command=delete_txt)
-
 sett_menu.add_command(label="Шрифт (Ctrl+R)", command=get_shrift)
 sett_menu.add_separator()
 sett_menu.add_command(label="Темы", command=themes)
 help_menu.add_command(label="Справка (Ctrl+I)", command=all_info)
- 
 app = RKB(window)
 window.bind("<Control-Shift-S>", save_file)
 window.bind("<Control-s>", save_with_ext)
@@ -425,8 +344,10 @@ window.bind("<Control-t>", themes)
 window.bind("<Control-i>", all_info)
 window.bind("<Control-p>", printing)
 window.bind("<Control-b>", search_in_br)
-
 window.config(menu=main_menu)
 window.protocol("WM_DELETE_WINDOW", closew)
-window.iconbitmap(r"""C:\Program Files\VarTexter\vartexter.ico""")
+try:
+    window.iconbitmap(r"""C:\Program Files\VarTexter\vartexter.ico""")
+except:
+    pass
 window.mainloop()
